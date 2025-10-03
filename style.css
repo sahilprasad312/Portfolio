@@ -1,32 +1,33 @@
 /* -------------------------------------------------
-   Portfolio - Two-Colour Themed Styles (Option A)
-   Primary: Midnight  #0B3553  (rgb 11,53,83)
-   Accent : Teal      #17A2B8  (rgb 23,162,184)
+   Portfolio - Two-Colour Themed Styles (Option B)
+   Primary: Charcoal  #111827  (rgb 17,24,39)
+   Accent : Amber     #F59E0B  (rgb 245,158,11)
    Font: Roboto
+   Added: full-page blurred background image + overlay
    -------------------------------------------------*/
 
 /* ----------------------
-   Base & Font
+   Base & Font + BG vars
 ---------------------- */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
 :root {
   /* layout */
-  --nav-height: 72px; /* fallback; may be updated in JS */
+  --nav-height: 72px;
   --max-width: 1200px;
 
-  /* two-color palette (Option A) */
-  --color-primary: #0B3553;
-  --color-primary-rgb: 11,53,83;
-  --color-accent:  #17A2B8;
-  --color-accent-rgb: 23,162,184;
+  /* two-color palette (Option B) */
+  --color-primary: #111827;
+  --color-primary-rgb: 17,24,39;
+  --color-accent:  #F59E0B;
+  --color-accent-rgb: 245,158,11;
 
   /* neutrals */
-  --bg: #f5f7fa;            /* subtle off-white page bg */
-  --surface: #ffffff;       /* card / sheet background */
-  --surface-2: #f8fafc;     /* light surface for small cards */
-  --muted: #6b7280;         /* secondary text */
-  --text: #0f1724;          /* primary text (dark) */
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface-2: #fbfbfc;
+  --muted: #6b7280;
+  --text: #0b1220;
   --inverse-text: #ffffff;
 
   /* design tokens */
@@ -34,13 +35,90 @@
   --radius-md: 10px;
   --radius-lg: 14px;
   --shadow-1: 0 6px 20px rgba(var(--color-primary-rgb), 0.06);
-  --shadow-2: 0 12px 30px rgba(11,17,34,0.08);
-  --glass: rgba(255,255,255,0.6);
+  --shadow-2: 0 12px 30px rgba(17,24,39,0.08);
+
+  /* ---------- Background image controls ---------- */
+  /* Set your image here. Example: url("/assets/bg.jpg") */
+  --bg-image-url: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder');
+  --bg-blur: 10px;                 /* blur strength */
+  --bg-scale: 1.05;                /* slight scale to hide edges when blurred */
+  --bg-contrast: 0.95;             /* contrast applied to image */
+  --bg-overlay: rgba(17,24,39,0.36);/* dark overlay to improve text contrast */
+  --bg-fixed: true;                /* true -> background-attachment: fixed (desktop parallax-like) */
+  --bg-attachment: fixed;          /* use this for background-attachment */
+  --bg-opacity: 1;                 /* overall bg layer opacity */
 }
 
 /* sensible resets */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
+
+/* ---------- Background layers (before = image+blur, after = overlay) ----------
+   Implementation notes:
+   - body::before shows the background image, blurred and slightly scaled to avoid edge artifacts.
+   - body::after places a semi-opaque overlay for contrast (useful for text readability).
+   - Both are fixed-position behind content and ignore pointer events.
+   - For performance on mobile / reduced-motion we lower blur or disable fixed attachment.
+--------------------------------------------------------------------------*/
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -2; /* image below overlay (we'll adjust after) */
+}
+
+/* background image layer */
+body::before {
+  z-index: -2;
+  background-image: var(--bg-image-url);
+  background-size: cover;
+  background-position: center center;
+  /* optional fixed behavior */
+  background-attachment: var(--bg-attachment, fixed);
+  background-attachment: var(--bg-fixed, true) == true ? fixed : scroll;
+  /* visual effects */
+  filter: blur(var(--bg-blur)) contrast(var(--bg-contrast));
+  transform: scale(var(--bg-scale));
+  opacity: var(--bg-opacity);
+  will-change: transform, filter;
+}
+
+/* semi-opaque overlay for contrast */
+body::after {
+  z-index: -1;
+  background: linear-gradient(rgba(255,255,255,0), rgba(0,0,0,0)) , var(--bg-overlay);
+  /* ensure overlay doesn't block underlying background when opacity is lowered */
+  opacity: 1;
+}
+
+/* Fallback if user sets --bg-image-url: none (hide layers) */
+body.has-no-bg::before,
+body.has-no-bg::after {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --bg-blur: 0px; --bg-scale: 1; --bg-fixed: false; --bg-attachment: scroll; }
+  body::before { filter: none; transform: none; background-attachment: scroll; }
+}
+}
+
+@media (max-width: 640px) {
+  :root { --bg-blur: 6px; --bg-scale: 1.02; --bg-fixed: false; --bg-overlay: rgba(17,24,39,0.42); --bg-attachment: scroll; }
+  body::before { background-attachment: scroll; }
+}
+}
+
+/* Print: don't print the heavy image */
+@media print {
+  body::before, body::after { display: none !important; }
+}
+
+/* ----------------------
+   Body & main layout
+---------------------- */
 body {
   font-family: 'Roboto', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   background: var(--bg);
@@ -48,7 +126,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   scroll-behavior: smooth;
-  padding-top: var(--nav-height); /* ensure content starts below fixed navbar */
+  padding-top: var(--nav-height);
   line-height: 1.45;
   font-size: 16px;
 }
@@ -69,7 +147,7 @@ header {
   align-items: center;
 }
 header.scrolled {
-  box-shadow: 0 8px 30px rgba(11,17,34,0.12);
+  box-shadow: 0 8px 30px rgba(17,24,39,0.12);
   background: linear-gradient(180deg, rgba(var(--color-primary-rgb),0.04), rgba(255,255,255,0.85));
 }
 
@@ -114,7 +192,7 @@ nav a:focus {
 }
 nav a:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.14);
+  box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.12);
 }
 
 /* ----------------------
@@ -138,8 +216,8 @@ nav a:focus {
 
 /* visual card look (outer) */
 .section .card-inner {
-  --revealOffset: 50px;   /* reveal offset (animates to 0) */
-  --parallaxY: 0px;       /* parallax offset (updated per frame) */
+  --revealOffset: 50px;
+  --parallaxY: 0px;
   width: 100%;
   max-width: 1000px;
   background: var(--surface);
@@ -149,7 +227,6 @@ nav a:focus {
   padding: 3.5rem 2rem;
   transform-style: preserve-3d;
   will-change: transform, box-shadow;
-  /* combined transform: parallax + reveal */
   transform: translateY(calc(var(--parallaxY) + var(--revealOffset)));
   transition: box-shadow 0.25s ease, transform 0.35s cubic-bezier(.2,.9,.2,1);
 }
@@ -157,7 +234,7 @@ nav a:focus {
 /* hover 3D lift */
 .section .card-inner:hover {
   transform: translateY(calc(var(--parallaxY) - 10px)) rotateX(3deg) rotateY(2deg) scale(1.02);
-  box-shadow: 0 22px 40px rgba(11,17,34,0.12);
+  box-shadow: 0 22px 40px rgba(17,24,39,0.12);
 }
 
 /* text initial states inside card-inner; they animate via keyframes */
@@ -174,7 +251,7 @@ nav a:focus {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* subtle accent decorative bar (use where needed) */
+/* subtle accent decorative bar */
 .accent-bar {
   width: 56px;
   height: 6px;
@@ -199,7 +276,7 @@ nav a:focus {
   color: var(--inverse-text);
   text-decoration: none;
 }
-.btn:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(11,17,34,0.10); }
+.btn:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(17,24,39,0.10); }
 .btn:active{ transform: translateY(0); box-shadow: var(--shadow-1); }
 .btn.secondary {
   background: var(--color-accent);
@@ -245,8 +322,8 @@ a:hover, a:focus { color: var(--color-accent); text-decoration: underline; }
   --parallaxY: 0px;
   background: var(--surface-2);
   border-radius: var(--radius-sm);
-  border: 1px solid rgba(11,17,34,0.04);
-  box-shadow: 0 5px 15px rgba(11,17,34,0.05);
+  border: 1px solid rgba(17,24,39,0.04);
+  box-shadow: 0 5px 15px rgba(17,24,39,0.05);
   padding: 1rem 1.2rem;
   transform: translateY(calc(var(--parallaxY) + var(--revealOffset)));
   transition: transform 0.25s ease, box-shadow 0.25s ease;
@@ -254,7 +331,7 @@ a:hover, a:focus { color: var(--color-accent); text-decoration: underline; }
 }
 .project-card .card-inner:hover {
   transform: translateY(calc(var(--parallaxY) - 8px)) rotateX(4deg) rotateY(-4deg) scale(1.02);
-  box-shadow: 0 15px 30px rgba(11,17,34,0.10);
+  box-shadow: 0 15px 30px rgba(17,24,39,0.10);
 }
 
 /* project title, meta */
@@ -272,9 +349,7 @@ a:hover, a:focus { color: var(--color-accent); text-decoration: underline; }
 @keyframes blink{ 0%,50%,100%{opacity:1}25%,75%{opacity:0} }
 
 /* Focus states for accessibility */
-:focus {
-  outline: none;
-}
+:focus { outline: none; }
 :focus-visible {
   outline: 3px solid rgba(var(--color-accent-rgb),0.18);
   outline-offset: 3px;
@@ -286,7 +361,7 @@ input, textarea, select {
   width: 100%;
   padding: .6rem .75rem;
   border-radius: 8px;
-  border: 1px solid rgba(11,17,34,0.06);
+  border: 1px solid rgba(17,24,39,0.06);
   background: #fff;
   font-size: 1rem;
   color: var(--text);
@@ -304,7 +379,7 @@ footer {
   text-align: center;
   padding: 1.25rem;
   color: var(--muted);
-  background: linear-gradient(180deg, transparent, rgba(11,17,34,0.02));
+  background: linear-gradient(180deg, transparent, rgba(17,24,39,0.02));
   margin-top: 2.5rem;
 }
 
@@ -322,7 +397,7 @@ footer {
   .project-card { width: 46%; max-width: 48%; }
 }
 @media (max-width: 640px) {
-  nav ul { display: none; } /* keep simple - hamburger can be added later */
+  nav ul { display: none; }
   :root { --nav-height: 64px; }
   body { padding-top: var(--nav-height); }
   .project-cards { gap: 1rem; }
@@ -335,3 +410,23 @@ footer {
   header, .btn { display: none !important; }
   body { background: #fff; color: #000; }
 }
+/* Ensure footer is above background layers and not affected by blending */
+/* make all footer text white */
+footer {
+  color: #ffffff;
+}
+
+/* also make footer links white (and keep a visible hover state) */
+footer a,
+footer a:visited {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+footer a:hover,
+footer a:focus {
+  text-decoration: underline;
+  /* optional: use accent on hover for affordance */
+  color: var(--color-accent);
+}
+
