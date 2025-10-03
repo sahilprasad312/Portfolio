@@ -1,46 +1,81 @@
+/* -------------------------------------------------
+   Portfolio - Two-Colour Themed Styles (Option A)
+   Primary: Midnight  #0B3553  (rgb 11,53,83)
+   Accent : Teal      #17A2B8  (rgb 23,162,184)
+   Font: Roboto
+   -------------------------------------------------*/
+
 /* ----------------------
    Base & Font
 ---------------------- */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
 :root {
-  --nav-height: 72px; /* fallback, updated in JS on load */
+  /* layout */
+  --nav-height: 72px; /* fallback; may be updated in JS */
+  --max-width: 1200px;
+
+  /* two-color palette (Option A) */
+  --color-primary: #0B3553;
+  --color-primary-rgb: 11,53,83;
+  --color-accent:  #17A2B8;
+  --color-accent-rgb: 23,162,184;
+
+  /* neutrals */
+  --bg: #f5f7fa;            /* subtle off-white page bg */
+  --surface: #ffffff;       /* card / sheet background */
+  --surface-2: #f8fafc;     /* light surface for small cards */
+  --muted: #6b7280;         /* secondary text */
+  --text: #0f1724;          /* primary text (dark) */
+  --inverse-text: #ffffff;
+
+  /* design tokens */
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --shadow-1: 0 6px 20px rgba(var(--color-primary-rgb), 0.06);
+  --shadow-2: 0 12px 30px rgba(11,17,34,0.08);
+  --glass: rgba(255,255,255,0.6);
 }
 
+/* sensible resets */
 * { box-sizing: border-box; margin: 0; padding: 0; }
-
-html,body { height: 100%; }
-
+html, body { height: 100%; }
 body {
-  font-family: 'Roboto', sans-serif;
-  background: #f5f5f5;
-  color: #333;
-  scroll-behavior: smooth;
+  font-family: 'Roboto', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
   padding-top: var(--nav-height); /* ensure content starts below fixed navbar */
+  line-height: 1.45;
+  font-size: 16px;
 }
 
 /* ----------------------
-   Navbar
+   Header / Navbar
 ---------------------- */
 header {
   position: fixed;
   top: 0; left: 0;
   width: 100%;
-  background: #fff;
-  z-index: 1500;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  transition: box-shadow 0.25s ease;
   height: var(--nav-height);
+  z-index: 1500;
+  background: linear-gradient(180deg, rgba(var(--color-primary-rgb),0.03), rgba(255,255,255,0.6));
+  backdrop-filter: blur(6px);
+  transition: box-shadow 0.25s ease, background 0.25s ease;
+  display: flex;
+  align-items: center;
 }
-
 header.scrolled {
-  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  box-shadow: 0 8px 30px rgba(11,17,34,0.12);
+  background: linear-gradient(180deg, rgba(var(--color-primary-rgb),0.04), rgba(255,255,255,0.85));
 }
 
 nav {
-  max-width: 1200px;
+  width: 100%;
+  max-width: var(--max-width);
   margin: 0 auto;
   height: 100%;
   display: flex;
@@ -49,30 +84,49 @@ nav {
   padding: 0 1.25rem;
 }
 
-.logo { font-weight: 700; font-size: 1.25rem; }
+/* logo */
+.logo {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--color-primary);
+  letter-spacing: 0.2px;
+}
 
+/* nav links */
 nav ul {
   list-style: none;
   display: flex;
   gap: 1.25rem;
   align-items: center;
 }
-
 nav a {
   text-decoration: none;
-  color: #333;
+  color: var(--text);
   font-weight: 500;
-  transition: color 0.2s ease;
+  transition: color 0.18s ease, transform 0.12s ease;
+  padding: 0.25rem 0.35rem;
+  border-radius: 6px;
+}
+nav a:hover,
+nav a:focus {
+  color: var(--color-accent);
+  transform: translateY(-2px);
+}
+nav a:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.14);
 }
 
-nav a:hover { color: #007bff; }
-
 /* ----------------------
-   Sections & Card Inner
-   Use .card-inner so we can combine reveal + parallax transforms
+   Container / Sections
 ---------------------- */
-main { max-width: 1200px; margin: 0 auto; padding: 1rem; }
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 1rem;
+}
 
+/* re-use your .section and .card-inner structure */
 .section {
   width: 100%;
   margin: 2.25rem auto;
@@ -88,10 +142,10 @@ main { max-width: 1200px; margin: 0 auto; padding: 1rem; }
   --parallaxY: 0px;       /* parallax offset (updated per frame) */
   width: 100%;
   max-width: 1000px;
-  background: #fff;
-  border-radius: 10px;
-  border: 1px solid #ccc;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(var(--color-primary-rgb), 0.06);
+  box-shadow: var(--shadow-1);
   padding: 3.5rem 2rem;
   transform-style: preserve-3d;
   will-change: transform, box-shadow;
@@ -100,10 +154,10 @@ main { max-width: 1200px; margin: 0 auto; padding: 1rem; }
   transition: box-shadow 0.25s ease, transform 0.35s cubic-bezier(.2,.9,.2,1);
 }
 
-/* hover 3D lift (applied to the whole card-inner) */
+/* hover 3D lift */
 .section .card-inner:hover {
   transform: translateY(calc(var(--parallaxY) - 10px)) rotateX(3deg) rotateY(2deg) scale(1.02);
-  box-shadow: 0 22px 40px rgba(0,0,0,0.12);
+  box-shadow: 0 22px 40px rgba(11,17,34,0.12);
 }
 
 /* text initial states inside card-inner; they animate via keyframes */
@@ -113,15 +167,60 @@ main { max-width: 1200px; margin: 0 auto; padding: 1rem; }
   transform: translateY(10px);
   animation: fadeUp 0.6s forwards;
 }
-
-.section .card-inner h2 { animation-delay: 0.15s; font-size: 1.9rem; margin-bottom: .5rem; }
-.section .card-inner p  { animation-delay: 0.35s; font-size: 1.05rem; line-height: 1.6; max-width: 70ch; }
+.section .card-inner h2 { animation-delay: 0.15s; font-size: 1.9rem; margin-bottom: .5rem; color: rgba(var(--color-primary-rgb),0.95); }
+.section .card-inner p  { animation-delay: 0.35s; font-size: 1.05rem; line-height: 1.6; max-width: 70ch; color: var(--muted); }
 
 @keyframes fadeUp {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Project cards container */
+/* subtle accent decorative bar (use where needed) */
+.accent-bar {
+  width: 56px;
+  height: 6px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  margin-bottom: 1rem;
+}
+
+/* Buttons (utility) */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .55rem .9rem;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+  box-shadow: var(--shadow-1);
+  background: var(--color-primary);
+  color: var(--inverse-text);
+  text-decoration: none;
+}
+.btn:hover { transform: translateY(-3px); box-shadow: 0 14px 30px rgba(11,17,34,0.10); }
+.btn:active{ transform: translateY(0); box-shadow: var(--shadow-1); }
+.btn.secondary {
+  background: var(--color-accent);
+  color: var(--inverse-text);
+}
+
+/* ghost/outline */
+.btn.ghost {
+  background: transparent;
+  color: var(--color-primary);
+  border: 1px solid rgba(var(--color-primary-rgb),0.12);
+  box-shadow: none;
+}
+
+/* Links */
+a { color: var(--color-primary); text-decoration: none; }
+a:hover, a:focus { color: var(--color-accent); text-decoration: underline; }
+
+/* ----------------------
+   Project Cards grid + items
+---------------------- */
 .project-cards {
   display: flex;
   flex-wrap: wrap;
@@ -132,53 +231,107 @@ main { max-width: 1200px; margin: 0 auto; padding: 1rem; }
   box-sizing: border-box;
 }
 
-/* individual project card (outer) */
+/* project-card (outer) */
 .project-card {
   width: 250px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   overflow: visible;
-  background: transparent; /* outer is transparent, inner contains visuals */
+  background: transparent;
 }
 
-/* inner visual of project card — separate inner to allow independent parallax */
+/* inner visual of project card — allow separate parallax / reveal */
 .project-card .card-inner {
   --revealOffset: 40px;
   --parallaxY: 0px;
-  background: #f9f9f9;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(11,17,34,0.04);
+  box-shadow: 0 5px 15px rgba(11,17,34,0.05);
   padding: 1rem 1.2rem;
   transform: translateY(calc(var(--parallaxY) + var(--revealOffset)));
   transition: transform 0.25s ease, box-shadow 0.25s ease;
   will-change: transform, box-shadow;
 }
-
 .project-card .card-inner:hover {
   transform: translateY(calc(var(--parallaxY) - 8px)) rotateX(4deg) rotateY(-4deg) scale(1.02);
-  box-shadow: 0 15px 30px rgba(0,0,0,0.10);
+  box-shadow: 0 15px 30px rgba(11,17,34,0.10);
 }
 
-/* small responsive tweaks + spacing */
-footer { text-align: center; padding: 1.25rem; color: #666; }
+/* project title, meta */
+.project-card h3 { margin: .35rem 0 .15rem 0; font-size: 1rem; color: rgba(var(--color-primary-rgb),0.95); }
+.project-card p { margin: 0; font-size: .95rem; color: var(--muted); }
 
+/* ----------------------
+   Typewriter / small utilities
+---------------------- */
 #typewriter::after {
   content: '|';
   animation: blink 0.8s infinite;
+  color: rgba(var(--color-primary-rgb),0.9);
 }
 @keyframes blink{ 0%,50%,100%{opacity:1}25%,75%{opacity:0} }
 
-/* responsive */
+/* Focus states for accessibility */
+:focus {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid rgba(var(--color-accent-rgb),0.18);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* Forms */
+input, textarea, select {
+  width: 100%;
+  padding: .6rem .75rem;
+  border-radius: 8px;
+  border: 1px solid rgba(11,17,34,0.06);
+  background: #fff;
+  font-size: 1rem;
+  color: var(--text);
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 6px 18px rgba(var(--color-primary-rgb), 0.06);
+  outline: none;
+}
+
+/* ----------------------
+   Footer
+---------------------- */
+footer {
+  text-align: center;
+  padding: 1.25rem;
+  color: var(--muted);
+  background: linear-gradient(180deg, transparent, rgba(11,17,34,0.02));
+  margin-top: 2.5rem;
+}
+
+/* ----------------------
+   Utility helpers
+---------------------- */
+.row { display:flex; gap:1rem; align-items:center; }
+.col { display:flex; flex-direction:column; gap:0.75rem; }
+.container-narrow { max-width: 900px; margin: 0 auto; padding: 0 1rem; }
+
+/* responsive tweaks */
 @media (max-width: 900px) {
   .section .card-inner { padding: 2.5rem 1.25rem; }
   .section { margin: 1.25rem 0; }
+  .project-card { width: 46%; max-width: 48%; }
 }
 @media (max-width: 640px) {
-  nav ul { display: none; } /* keep it simple; add hamburger later if needed */
+  nav ul { display: none; } /* keep simple - hamburger can be added later */
   :root { --nav-height: 64px; }
   body { padding-top: var(--nav-height); }
   .project-cards { gap: 1rem; }
   .project-card { width: 100%; max-width: 520px; }
+  .container { padding: 0.75rem; }
 }
 
-
+/* small accessibility / print tweak */
+@media print {
+  header, .btn { display: none !important; }
+  body { background: #fff; color: #000; }
+}
