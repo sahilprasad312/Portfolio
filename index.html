@@ -3,85 +3,119 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Sahil Prasad | Portfolio</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Sahil Prasad — Portfolio</title>
+  <meta name="description" content="Sahil Prasad — AI & Data Science student & builder. Portfolio." />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div class="background" data-bg="https://picsum.photos/1600/900" aria-hidden="true"></div>
+  <div class="overlay" aria-hidden="true"></div>
 
-  <!-- Navbar (fixed) -->
-  <header id="header">
-    <nav>
-      <h1 class="logo">Sahil Prasad</h1>
-      <ul>
-        <li><a href="#home">Home</a></li>
-        <li><a href="#about">About</a></li>
-        <li><a href="#projects">Projects</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </nav>
+  <header id="header" class="header" role="banner">
+    <div class="nav-wrap">
+      <a class="brand" href="#hero">Sahil Prasad</a>
+
+      <nav id="primary-nav" class="nav" role="navigation" aria-label="Primary">
+        <ul>
+          <li><a href="#hero" data-nav>Home</a></li>
+          <li><a href="#projects" data-nav>Projects</a></li>
+          <li><a href="#contact" data-nav>Contact</a></li>
+        </ul>
+      </nav>
+
+      <button id="nav-toggle" class="nav-toggle" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="hamburger" aria-hidden="true"></span>
+      </button>
+    </div>
   </header>
 
-  <!-- Sections: each section has .card-inner for transforms -->
-  <main>
-    <!-- Home -->
-    <section id="home" class="section">
-      <div class="card-inner">
-        <h2 id="typewriter"></h2>
-        <p>AI & Data Science Engineer | Tech Explorer</p>
-      </div>
-    </section>
+  <main class="site" id="main">
+    <section id="hero" class="section" aria-labelledby="hero-title">
+      <div class="card center">
+        <h1 id="hero-title" class="reveal">
+          <span id="typewriter" class="typewriter" aria-live="polite" aria-atomic="true"></span>
+        </h1>
+        <p class="lead reveal">AI & Data Science • Builder — I make clean, useful things.</p>
 
-    <!-- About -->
-    <section id="about" class="section">
-      <div class="card-inner">
-        <h2>About Me</h2>
-        <p>I’m passionate about AI, coding, and creating clean, professional web experiences. I love building projects that combine technology and design seamlessly.</p>
-      </div>
-    </section>
+        <div class="marquee-card reveal" aria-hidden="false">
+          <div class="marquee-container" id="marquee">
+            <div class="marquee-track" id="marquee-track">✨ Modern web · Clean UI · Open source · Curious learner ✨</div>
+          </div>
+        </div>
 
-    <!-- Projects -->
-    <section id="projects" class="section">
-      <div class="card-inner">
-        <h2>Projects</h2>
-        <div class="project-cards">
-          <article class="project-card">
-            <div class="card-inner">
-              <h3>Futuristic Portfolio</h3>
-              <p>Professional, animated personal portfolio with clean design and smooth 3D effects.</p>
-            </div>
-          </article>
+        <div class="actions reveal">
+          <a class="btn primary" href="/resume.pdf" download>Download Resume</a>
+          <a class="btn ghost" href="#contact">Contact</a>
+        </div>
 
-          <article class="project-card">
-            <div class="card-inner">
-              <h3>AI Chatbot</h3>
-              <p>A chatbot trained for intelligent, natural conversations.</p>
-            </div>
-          </article>
+        <div class="social-badge reveal">
+          <div class="badge-base LI-profile-badge" 
+               data-locale="en_US" 
+               data-size="medium" 
+               data-theme="dark" 
+               data-type="VERTICAL" 
+               data-vanity="sahil-prasad-b75740356" 
+               data-version="v1">
+            <a class="badge-base__link LI-simple-link" 
+               href="https://in.linkedin.com/in/sahil-prasad-b75740356?trk=profile-badge">
+               Sahil Prasad
+            </a>
+          </div>
+        </div>
 
-          <article class="project-card">
-            <div class="card-inner">
-              <h3>Data Analytics Dashboard</h3>
-              <p>Interactive dashboard to visualize and analyze complex datasets efficiently.</p>
-            </div>
-          </article>
+        <div class="social-links reveal" aria-hidden="false">
+          <a href="https://github.com" aria-label="GitHub" class="icon" target="_blank" rel="noopener">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 .5a12 12 0 00-3.8 23.4c.6.1.8-.3.8-.6v-2.1c-3.3.7-4-1.6-4-1.6-.5-1.3-1.2-1.6-1.2-1.6-1-.7.1-.7.1-.7 1.1.1 1.7 1.2 1.7 1.2 1 .1.8 2 .1 2.5-2.6.3-5.3-1.3-5.3-5.8 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.4.1-3 0 0 1-.3 3.3 1.2a11.5 11.5 0 016 0C17.5 5 18.5 5.2 18.5 5.2c.6 1.6.2 2.8.1 3 .8.8 1.2 1.9 1.2 3.2 0 4.5-2.7 6.1-5.3 5.8.6.5 1 1.4 1 2.8v4.1c0 .3.2.7.8.6A12 12 0 0012 .5z" fill="currentColor"/></svg>
+          </a>
+          <a href="https://linkedin.com/in/sahil-prasad-b75740356" aria-label="LinkedIn" class="icon" target="_blank" rel="noopener">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4.98 3.5a2.25 2.25 0 11-.002 4.5A2.25 2.25 0 014.98 3.5zM3 9h4v12H3zM9 9h3.8v1.6h.1c.5-.9 1.8-1.9 3.7-1.9 4 0 4.7 2.6 4.7 6v7.3h-4V17c0-2-0.04-4.6-3-4.6-3 0-3.5 2.3-3.5 4.4v7.2H9V9z" fill="currentColor"/></svg>
+          </a>
         </div>
       </div>
     </section>
 
-    <!-- Contact -->
-    <section id="contact" class="section">
-      <div class="card-inner">
-        <h2>Contact</h2>
-        <p>Email: <a href="mailto:sahilprasad312@gmail.com">sahilprasad312@gmail.com</a></p>
-        <p>LinkedIn: <a href="https://www.linkedin.com/in/sahil-prasad-b75740356?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" rel="noopener">Sahil Prasad</a></p>
+    <section id="projects" class="section" aria-labelledby="projects-title">
+      <h2 id="projects-title" class="reveal">Selected Projects</h2>
+      <div class="project-grid reveal">
+        <article class="project card" tabindex="0">
+          <img src="https://picsum.photos/seed/p1/800/500" srcset="https://picsum.photos/seed/p1/400/250 400w, https://picsum.photos/seed/p1/800/500 800w, https://picsum.photos/seed/p1/1200/750 1200w" sizes="(max-width:600px) 100vw, 33vw" alt="Project 1 screenshot" loading="lazy">
+          <h3>Project One</h3>
+          <p>Short summary and tech used.</p>
+          <a class="btn ghost" href="#">View</a>
+        </article>
+
+        <article class="project card" tabindex="0">
+          <img src="https://picsum.photos/seed/p2/800/500" srcset="https://picsum.photos/seed/p2/400/250 400w, https://picsum.photos/seed/p2/800/500 800w, https://picsum.photos/seed/p2/1200/750 1200w" sizes="(max-width:600px) 100vw, 33vw" alt="Project 2 screenshot" loading="lazy">
+          <h3>Project Two</h3>
+          <p>Short summary and tech used.</p>
+          <a class="btn ghost" href="#">View</a>
+        </article>
+
+        <article class="project card" tabindex="0">
+          <img src="https://picsum.photos/seed/p3/800/500" srcset="https://picsum.photos/seed/p3/400/250 400w, https://picsum.photos/seed/p3/800/500 800w, https://picsum.photos/seed/p3/1200/750 1200w" sizes="(max-width:600px) 100vw, 33vw" alt="Project 3 screenshot" loading="lazy">
+          <h3>Project Three</h3>
+          <p>Short summary and tech used.</p>
+          <a class="btn ghost" href="#">View</a>
+        </article>
+      </div>
+    </section>
+
+    <section id="contact" class="section" aria-labelledby="contact-title">
+      <h2 id="contact-title" class="reveal">Contact</h2>
+      <div class="card center reveal">
+        <p>Email: <a href="mailto:sahil@example.com">sahil@example.com</a></p>
+        <form id="contact-form" class="contact-form" action="mailto:sahil@example.com" method="post" enctype="text/plain" aria-label="Contact form">
+          <textarea name="message" rows="4" placeholder="Say hi — I'm open to work or collabs" required></textarea>
+          <button class="btn primary" type="submit">Send</button>
+        </form>
       </div>
     </section>
   </main>
 
-  <footer>
-    <p>© 2025 Sahil Prasad | Designed Professionally</p>
-  </footer>
+  <footer class="footer" role="contentinfo">© 2025 Sahil Prasad — Built with ❤️</footer>
 
+  <script src="https://platform.linkedin.com/badges/js/profile.js" async defer></script>
   <script src="script.js"></script>
 </body>
 </html>
