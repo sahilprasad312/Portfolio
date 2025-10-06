@@ -1,104 +1,119 @@
-/* -------------------------
-   Helper: set CSS nav height
-   ensures first content isn't hidden under fixed navbar
-------------------------- */
-const header = document.getElementById('header');
-function updateNavHeight() {
-  const h = header.offsetHeight || 72;
-  document.documentElement.style.setProperty('--nav-height', `${h}px`);
-}
-window.addEventListener('load', updateNavHeight);
-window.addEventListener('resize', updateNavHeight);
+(function(){
+  const bgSelector = '.background';
+  const bgAttr = 'data-bg';
+  const header = document.getElementById('header');
+  const navToggle = document.getElementById('nav-toggle');
+  const nav = document.getElementById('primary-nav');
+  const navLinks = document.querySelectorAll('[data-nav]');
+  const revealElements = document.querySelectorAll('.reveal');
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* -------------------------
-   Navbar shadow toggle on scroll
-------------------------- */
-window.addEventListener('scroll', () => {
-  if (window.scrollY > 20) header.classList.add('scrolled');
-  else header.classList.remove('scrolled');
-});
-
-/* -------------------------
-   Reveal logic (uses CSS var --revealOffset)
-   and staggered project-card reveal
-------------------------- */
-const sections = document.querySelectorAll('.section');
-const projectCards = document.querySelectorAll('.project-card');
-
-function revealOnScroll() {
-  const viewportH = window.innerHeight;
-  // Sections
-  sections.forEach((sec) => {
-    const inner = sec.querySelector('.card-inner');
-    const rect = sec.getBoundingClientRect();
-    if (rect.top < viewportH - 120) {
-      // set reveal offset to 0 to animate into place
-      inner.style.setProperty('--revealOffset', '0px');
-    }
-  });
-
-  // Project cards (staggered)
-  projectCards.forEach((card, idx) => {
-    const inner = card.querySelector('.card-inner');
-    const rect = card.getBoundingClientRect();
-    if (rect.top < viewportH - 80) {
-      // set reveal offset to 0 (appearance)
-      inner.style.setProperty('--revealOffset', '0px');
-      // add a small transition delay so cards appear staggered
-      inner.style.transitionDelay = `${idx * 0.08}s`;
-    }
-  });
-}
-window.addEventListener('scroll', revealOnScroll);
-window.addEventListener('load', revealOnScroll);
-
-/* -------------------------
-   High-FPS parallax animation
-   Updates only CSS variable --parallaxY per element
-   so it composes with reveal offset (no transform overwrite)
-------------------------- */
-function animateParallax() {
-  const scrollY = window.scrollY;
-  // Sections parallax: deeper sections move slightly more
-  sections.forEach((sec, index) => {
-    const depthFactor = 0.02 + index * 0.005; // tiny factors
-    const parallaxY = -Math.round(scrollY * depthFactor);
-    const inner = sec.querySelector('.card-inner');
-    if (inner) inner.style.setProperty('--parallaxY', `${parallaxY}px`);
-  });
-
-  // Project cards parallax: based on card's distance from center for nicer effect
-  projectCards.forEach((card, idx) => {
-    const inner = card.querySelector('.card-inner');
-    const rect = card.getBoundingClientRect();
-    const distFromCenter = (rect.top + rect.height / 2) - (window.innerHeight / 2);
-    // smaller multiplier to keep movement subtle
-    const parallax = Math.round(-distFromCenter * 0.03);
-    if (inner) inner.style.setProperty('--parallaxY', `${parallax}px`);
-  });
-
-  requestAnimationFrame(animateParallax);
-}
-requestAnimationFrame(animateParallax);
-
-/* -------------------------
-   Typewriter (simple)
-------------------------- */
-function typeWriter(elementId, text, speed = 80) {
-  const el = document.getElementById(elementId);
-  if (!el) return;
-  let i = 0;
-  el.textContent = '';
-  function typing() {
-    if (i < text.length) {
-      el.textContent += text.charAt(i);
-      i++;
-      setTimeout(typing, speed);
-    }
+  function lazyLoadBackground(){
+    const el = document.querySelector(bgSelector);
+    if(!el) return;
+    const src = el.getAttribute(bgAttr);
+    if(!src) return;
+    const img = new Image();
+    img.onload = () => {
+      el.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.55)), url("${src}")`;
+      el.style.backgroundSize = 'cover';
+      el.style.backgroundPosition = 'center';
+    };
+    img.onerror = () => { el.style.backgroundImage='none'; el.style.backgroundColor='#000'; };
+    img.src = src;
   }
-  typing();
-}
-window.addEventListener('load', () => {
-  typeWriter('typewriter', "Hi, I'm Sahil Prasad", 80);
-});
 
+  function setNavHeight(){
+    const h = header ? header.offsetHeight : 72;
+    document.documentElement.style.setProperty('--nav-height', `${h}px`);
+  }
+
+  function onScroll(){
+    if(!header) return;
+    if(window.scrollY > 8) header.classList.add('scrolled'); else header.classList.remove('scrolled');
+    updateActiveNav();
+  }
+
+  function toggleNav(){
+    if(!navToggle) return;
+    const expanded = navToggle.getAttribute('aria-expanded') === 'true';
+    navToggle.setAttribute('aria-expanded', String(!expanded));
+    if(nav) nav.classList.toggle('open', !expanded);
+  }
+  function closeNav(){ if(nav) nav.classList.remove('open'); if(navToggle) navToggle.setAttribute('aria-expanded','false'); }
+
+  function smoothScrollHandler(e){
+    const href = this.getAttribute('href');
+    if(!href || !href.startsWith('#')) return;
+    e.preventDefault();
+    const target = document.querySelector(href);
+    if(!target) return;
+    target.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'start' });
+    target.setAttribute('tabindex','-1');
+    target.focus({preventScroll:true});
+    closeNav();
+  }
+
+  function createRevealObserver(){
+    if(prefersReduced){ revealElements.forEach(el=>el.classList.add('is-visible')); return; }
+    const io = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => { if(entry.isIntersecting){ entry.target.classList.add('is-visible'); obs.unobserve(entry.target); }});
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+    revealElements.forEach(el => io.observe(el));
+  }
+
+  function runTypewriter(el, texts, speed=60, pause=1100){
+    if(!el) return;
+    let idx=0, char=0, dir=1;
+    function loop(){
+      const t = texts[idx];
+      el.textContent = t.slice(0, char);
+      if(dir===1 && char===t.length){ dir=-1; setTimeout(loop,pause); }
+      else if(dir===-1 && char===0){ dir=1; idx=(idx+1)%texts.length; setTimeout(loop,200); }
+      else{ char+=dir; setTimeout(loop, prefersReduced?0:speed); }
+    }
+    loop();
+  }
+
+  function updateActiveNav(){
+    const sections = document.querySelectorAll('main > section[id]');
+    if(!sections.length) return;
+    let current = sections[0];
+    sections.forEach(section => {
+      const rect = section.getBoundingClientRect();
+      if(rect.top <= 120 && rect.bottom >= 120) current = section;
+    });
+    navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === `#${current.id}`));
+  }
+
+  function setupMarquee(){
+    const container = document.getElementById('marquee');
+    const track = document.getElementById('marquee-track');
+    if(!container || !track) return;
+    function apply(){
+      const cw = container.getBoundingClientRect().width;
+      const tw = track.getBoundingClientRect().width;
+      const pxPerSecond = 140;
+      const distance = cw + tw;
+      const secs = Math.max(8, Math.round(distance / pxPerSecond));
+      document.documentElement.style.setProperty('--marquee-duration', `${secs}s`);
+    }
+    apply();
+    let rID;
+    window.addEventListener('resize', () => { clearTimeout(rID); rID = setTimeout(apply, 120); });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    lazyLoadBackground();
+    setNavHeight();
+    createRevealObserver();
+    setupMarquee();
+
+    if(navToggle) navToggle.addEventListener('click', toggleNav);
+    document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', smoothScrollHandler));
+    runTypewriter(document.getElementById('typewriter'), ['Hi — I’m Sahil', 'AI & Data Science • Builder', 'I make clean, useful things'], 60, 1200);
+  });
+
+  window.addEventListener('resize', setNavHeight);
+  window.addEventListener('scroll', onScroll, { passive: true });
+})();
